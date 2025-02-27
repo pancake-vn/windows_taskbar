@@ -51,7 +51,7 @@ class WindowsTaskbarPlugin : public flutter::Plugin {
 
   std::string GetErrorString(std::string method_name);
 
-  int32_t window_proc_id_ = -1;
+  // int32_t window_proc_id_ = -1;
   flutter::PluginRegistrarWindows* registrar_ = nullptr;
   std::unique_ptr<WindowsTaskbar> windows_taskbar_ = nullptr;
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel_ =
@@ -73,34 +73,34 @@ WindowsTaskbarPlugin::WindowsTaskbarPlugin(
   channel_->SetMethodCallHandler([this](const auto& call, auto result) {
     HandleMethodCall(call, std::move(result));
   });
-  window_proc_id_ = registrar_->RegisterTopLevelWindowProcDelegate(
-      [=](HWND hwnd, UINT message, WPARAM wparam,
-          LPARAM lparam) -> std::optional<HRESULT> {
-        {
-          switch (message) {
-            case WM_COMMAND: {
-              auto button_id = LOWORD(wparam);
-              if (button_id >= WindowsTaskbar::kMinThumbButtonID &&
-                  button_id < WindowsTaskbar::kMinThumbButtonID +
-                                  WindowsTaskbar::kMaxThumbButtonCount) {
-                auto index = button_id - WindowsTaskbar::kMinThumbButtonID;
-                channel_->InvokeMethod(
-                    "WM_COMMAND",
-                    std::make_unique<flutter::EncodableValue>(index));
-                return 0;
-              }
-              break;
-            }
-            default:
-              break;
-          }
-          return std::nullopt;
-        }
-      });
+  // window_proc_id_ = registrar_->RegisterTopLevelWindowProcDelegate(
+  //     [=](HWND hwnd, UINT message, WPARAM wparam,
+  //         LPARAM lparam) -> std::optional<HRESULT> {
+  //       {
+  //         switch (message) {
+  //           case WM_COMMAND: {
+  //             auto button_id = LOWORD(wparam);
+  //             if (button_id >= WindowsTaskbar::kMinThumbButtonID &&
+  //                 button_id < WindowsTaskbar::kMinThumbButtonID +
+  //                                 WindowsTaskbar::kMaxThumbButtonCount) {
+  //               auto index = button_id - WindowsTaskbar::kMinThumbButtonID;
+  //               channel_->InvokeMethod(
+  //                   "WM_COMMAND",
+  //                   std::make_unique<flutter::EncodableValue>(index));
+  //               return 0;
+  //             }
+  //             break;
+  //           }
+  //           default:
+  //             break;
+  //         }
+  //         return std::nullopt;
+  //       }
+  //     });
 }
 
 WindowsTaskbarPlugin::~WindowsTaskbarPlugin() {
-  registrar_->UnregisterTopLevelWindowProcDelegate(window_proc_id_);
+  // registrar_->UnregisterTopLevelWindowProcDelegate(window_proc_id_);
 }
 
 void WindowsTaskbarPlugin::HandleMethodCall(
